@@ -1,0 +1,68 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { LogIn } from "lucide-react";
+
+interface CheckInFormProps {
+  onCheckIn: (licensePlate: string) => void;
+}
+
+export const CheckInForm = ({ onCheckIn }: CheckInFormProps) => {
+  const [licensePlate, setLicensePlate] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!licensePlate.trim()) return;
+    
+    setIsSubmitting(true);
+    
+    // Simulate processing time
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    onCheckIn(licensePlate.trim());
+    setLicensePlate("");
+    setIsSubmitting(false);
+  };
+
+  return (
+    <Card className="parking-card">
+      <CardHeader>
+        <div className="flex items-center gap-2">
+          <LogIn className="h-5 w-5 text-primary" />
+          <CardTitle>Vehicle Check-In</CardTitle>
+        </div>
+        <CardDescription>
+          Register your vehicle to start parking
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="licensePlate">License Plate</Label>
+            <Input
+              id="licensePlate"
+              type="text"
+              placeholder="Enter license plate"
+              value={licensePlate}
+              onChange={(e) => setLicensePlate(e.target.value.toUpperCase())}
+              className="transition-smooth"
+              maxLength={10}
+            />
+          </div>
+          
+          <Button 
+            type="submit" 
+            className="w-full transition-bounce" 
+            disabled={!licensePlate.trim() || isSubmitting}
+          >
+            {isSubmitting ? "Processing..." : "Check In Vehicle"}
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
+  );
+};
