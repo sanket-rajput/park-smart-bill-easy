@@ -168,4 +168,30 @@
   .transition-bounce {
     transition: var(--transition-bounce);
   }
+
+  /* Enhanced animations */
+  .hover-scale {
+    @apply transition-transform duration-200 hover:scale-105;
+  }
+
+  .fade-in-up {
+    animation: fade-in 0.6s ease-out;
+  }
+
+  .pulse-success {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    --tw-pulse-color: hsl(var(--accent));
+  }
+
+  /* Vehicle card enhancements */
+  .vehicle-card {
+    @apply parking-card border-l-4 border-l-primary;
+    background: linear-gradient(135deg, hsl(var(--card)), hsl(var(--primary) / 0.02));
+  }
+
+  /* Camera capture styles */
+  .camera-preview {
+    @apply rounded-lg border-2 border-dashed border-primary/30;
+    background: linear-gradient(45deg, transparent 40%, hsl(var(--primary) / 0.05) 50%, transparent 60%);
+  }
 }

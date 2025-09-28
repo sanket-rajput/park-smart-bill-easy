@@ -11,6 +11,7 @@ interface Vehicle {
   licensePlate: string;
   checkInTime: Date;
   slotNumber: number;
+  imageData?: string;
 }
 
 interface BillCalculation {
@@ -85,8 +86,20 @@ export const ParkedVehicles = ({ vehicles, onCheckOut, calculateBill }: ParkedVe
           ) : (
             <div className="space-y-4">
               {vehicles.map((vehicle) => (
-                <div key={vehicle.id} className="parking-card border border-border/50">
-                  <div className="flex items-center justify-between">
+                <div key={vehicle.id} className="parking-card border border-border/50 animate-fade-in">
+                  <div className="flex gap-4">
+                    {/* Vehicle Image */}
+                    {vehicle.imageData && (
+                      <div className="flex-shrink-0">
+                        <img
+                          src={vehicle.imageData}
+                          alt={`Vehicle ${vehicle.licensePlate}`}
+                          className="w-20 h-20 object-cover rounded-lg border-2 border-accent"
+                        />
+                      </div>
+                    )}
+                    
+                    {/* Vehicle Info */}
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <Badge variant="outline" className="font-mono text-base px-3 py-1">
@@ -99,7 +112,7 @@ export const ParkedVehicles = ({ vehicles, onCheckOut, calculateBill }: ParkedVe
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Clock className="h-4 w-4" />
-                          <span>Checked in: {format(vehicle.checkInTime, "h:mm a")}</span>
+                          <span>In: {format(vehicle.checkInTime, "h:mm a")}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="h-4 w-4" />
@@ -107,15 +120,19 @@ export const ParkedVehicles = ({ vehicles, onCheckOut, calculateBill }: ParkedVe
                         </div>
                       </div>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleCheckOutClick(vehicle)}
-                      className="transition-smooth hover:bg-destructive hover:text-destructive-foreground"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      Check Out
-                    </Button>
+                    
+                    {/* Check Out Button */}
+                    <div className="flex-shrink-0">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleCheckOutClick(vehicle)}
+                        className="transition-smooth hover:bg-destructive hover:text-destructive-foreground"
+                      >
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Check Out
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -139,6 +156,20 @@ export const ParkedVehicles = ({ vehicles, onCheckOut, calculateBill }: ParkedVe
           
           {billData && selectedVehicle && (
             <div className="space-y-4">
+              {/* Vehicle Info with Image */}
+              {selectedVehicle.imageData && (
+                <div className="parking-card bg-muted/30">
+                  <img
+                    src={selectedVehicle.imageData}
+                    alt={`Vehicle ${selectedVehicle.licensePlate}`}
+                    className="w-full h-32 object-cover rounded-lg mb-2"
+                  />
+                  <div className="text-center font-mono text-lg font-bold">
+                    {selectedVehicle.licensePlate}
+                  </div>
+                </div>
+              )}
+
               <div className="parking-card bg-muted/30">
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
@@ -152,6 +183,10 @@ export const ParkedVehicles = ({ vehicles, onCheckOut, calculateBill }: ParkedVe
                     <span className="font-mono">
                       {format(new Date(), "MMM d, h:mm a")}
                     </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Parking slot:</span>
+                    <span className="font-bold">#{selectedVehicle.slotNumber}</span>
                   </div>
                   <div className="flex justify-between font-medium">
                     <span>Total duration:</span>
