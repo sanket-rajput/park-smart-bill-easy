@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Car, Clock, DollarSign, ParkingCircle } from "lucide-react";
+import { Car, Clock, DollarSign, ParkingCircle, MapPin } from "lucide-react";
 import { CheckInForm } from "@/components/CheckInForm";
 import { ParkedVehicles } from "@/components/ParkedVehicles";
 import { PricingDisplay } from "@/components/PricingDisplay";
+import { ParkingSlots } from "@/components/ParkingSlots";
 import { useToast } from "@/hooks/use-toast";
 
 interface Vehicle {
@@ -12,28 +13,73 @@ interface Vehicle {
 
 interface ParkedVehicle extends Vehicle {
   id: string;
+  slotNumber: number;
+}
+
+interface ParkingSlot {
+  number: number;
+  isOccupied: boolean;
+  vehicleId?: string;
 }
 
 const Index = () => {
   const [parkedVehicles, setParkedVehicles] = useState<ParkedVehicle[]>([]);
+  const [parkingSlots, setParkingSlots] = useState<ParkingSlot[]>(() => {
+    // Initialize 50 parking slots (5 rows x 10 slots)
+    return Array.from({ length: 50 }, (_, i) => ({
+      number: i + 1,
+      isOccupied: false,
+    }));
+  });
   const { toast } = useToast();
 
   const handleCheckIn = (licensePlate: string) => {
+    // Find first available slot
+    const availableSlot = parkingSlots.find(slot => !slot.isOccupied);
+    
+    if (!availableSlot) {
+      toast({
+        title: "Parking Full",
+        description: "All parking slots are currently occupied.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const newVehicle: ParkedVehicle = {
       id: Date.now().toString(),
       licensePlate: licensePlate.toUpperCase(),
       checkInTime: new Date(),
+      slotNumber: availableSlot.number,
     };
+    
+    // Update parking slots
+    setParkingSlots(prev => prev.map(slot => 
+      slot.number === availableSlot.number 
+        ? { ...slot, isOccupied: true, vehicleId: newVehicle.id }
+        : slot
+    ));
     
     setParkedVehicles(prev => [...prev, newVehicle]);
     
     toast({
       title: "Vehicle Checked In",
-      description: `${licensePlate.toUpperCase()} has been registered successfully.`,
+      description: `${licensePlate.toUpperCase()} assigned to slot ${availableSlot.number}.`,
     });
   };
 
   const handleCheckOut = (vehicleId: string) => {
+    const vehicle = parkedVehicles.find(v => v.id === vehicleId);
+    
+    if (vehicle) {
+      // Free up the parking slot
+      setParkingSlots(prev => prev.map(slot => 
+        slot.number === vehicle.slotNumber 
+          ? { ...slot, isOccupied: false, vehicleId: undefined }
+          : slot
+      ));
+    }
+    
     setParkedVehicles(prev => prev.filter(v => v.id !== vehicleId));
   };
 
@@ -73,11 +119,17 @@ const Index = () => {
 
       <div className="container mx-auto px-4 py-8">
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="parking-card text-center">
             <Car className="h-8 w-8 mx-auto mb-2 text-primary" />
             <h3 className="text-2xl font-bold text-foreground">{parkedVehicles.length}</h3>
             <p className="text-muted-foreground">Currently Parked</p>
+          </div>
+          
+          <div className="parking-card text-center">
+            <MapPin className="h-8 w-8 mx-auto mb-2 text-accent" />
+            <h3 className="text-2xl font-bold text-foreground">{parkingSlots.filter(s => !s.isOccupied).length}</h3>
+            <p className="text-muted-foreground">Available Slots</p>
           </div>
           
           <div className="parking-card text-center">
@@ -93,11 +145,22 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Left Column - Check In & Pricing */}
           <div className="space-y-6">
-            <CheckInForm onCheckIn={handleCheckIn} />
+            <CheckInForm 
+              onCheckIn={handleCheckIn} 
+              availableSlots={parkingSlots.filter(s => !s.isOccupied).length}
+            />
             <PricingDisplay />
+          </div>
+
+          {/* Middle Column - Parking Slots Layout */}
+          <div className="lg:col-span-1">
+            <ParkingSlots 
+              slots={parkingSlots}
+              vehicles={parkedVehicles}
+            />
           </div>
 
           {/* Right Column - Parked Vehicles */}

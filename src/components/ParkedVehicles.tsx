@@ -10,6 +10,7 @@ interface Vehicle {
   id: string;
   licensePlate: string;
   checkInTime: Date;
+  slotNumber: number;
 }
 
 interface BillCalculation {
@@ -92,7 +93,7 @@ export const ParkedVehicles = ({ vehicles, onCheckOut, calculateBill }: ParkedVe
                           {vehicle.licensePlate}
                         </Badge>
                         <Badge className="bg-parking-occupied text-parking-occupied-foreground">
-                          Occupied
+                          Slot {vehicle.slotNumber}
                         </Badge>
                       </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">

@@ -55,7 +55,9 @@ export default {
         parking: {
           zone: "hsl(var(--parking-zone))",
           occupied: "hsl(var(--parking-occupied))",
+          "occupied-foreground": "hsl(var(--parking-occupied-foreground))",
           available: "hsl(var(--parking-available))",
+          "available-foreground": "hsl(var(--parking-available-foreground))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",

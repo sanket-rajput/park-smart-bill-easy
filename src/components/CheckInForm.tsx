@@ -7,9 +7,10 @@ import { LogIn } from "lucide-react";
 
 interface CheckInFormProps {
   onCheckIn: (licensePlate: string) => void;
+  availableSlots: number;
 }
 
-export const CheckInForm = ({ onCheckIn }: CheckInFormProps) => {
+export const CheckInForm = ({ onCheckIn, availableSlots }: CheckInFormProps) => {
   const [licensePlate, setLicensePlate] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,7 +37,7 @@ export const CheckInForm = ({ onCheckIn }: CheckInFormProps) => {
           <CardTitle>Vehicle Check-In</CardTitle>
         </div>
         <CardDescription>
-          Register your vehicle to start parking
+          Register your vehicle to start parking • {availableSlots} slots available
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -57,9 +58,9 @@ export const CheckInForm = ({ onCheckIn }: CheckInFormProps) => {
           <Button 
             type="submit" 
             className="w-full transition-bounce" 
-            disabled={!licensePlate.trim() || isSubmitting}
+            disabled={!licensePlate.trim() || isSubmitting || availableSlots === 0}
           >
-            {isSubmitting ? "Processing..." : "Check In Vehicle"}
+            {isSubmitting ? "Processing..." : availableSlots === 0 ? "Parking Full" : "Check In Vehicle"}
           </Button>
         </form>
       </CardContent>

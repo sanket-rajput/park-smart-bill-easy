@@ -45,8 +45,10 @@
 
     /* Custom parking system colors */
     --parking-zone: 200 100% 95%;
-    --parking-occupied: 0 100% 95%;
-    --parking-available: 142 100% 95%;
+    --parking-occupied: 0 65% 45%;
+    --parking-occupied-foreground: 0 0% 98%;
+    --parking-available: 142 65% 45%;
+    --parking-available-foreground: 0 0% 98%;
     
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
@@ -114,8 +116,10 @@
     --ring: 217 85% 55%;
 
     --parking-zone: 200 50% 15%;
-    --parking-occupied: 0 50% 15%;
-    --parking-available: 142 50% 15%;
+    --parking-occupied: 0 65% 55%;
+    --parking-occupied-foreground: 0 20% 8%;
+    --parking-available: 142 65% 55%;
+    --parking-available-foreground: 142 20% 8%;
 
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
